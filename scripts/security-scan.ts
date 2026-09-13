@@ -13,25 +13,39 @@ import { execFile } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { promisify } from "node:util";
+import { z } from "zod";
 
 const exec = promisify(execFile);
 const raiz = process.cwd();
 
-type Finding = {
-  id: string;
-  titulo: string;
-  severidade: string;
-  selecionadaEm: string;
-  correcao: string;
-  probe: string;
-  alvo: string;
-};
+/** Contrato de entrada de `certification/security-findings.json`. */
+const findingSchema = z.object({
+  id: z.string().min(1),
+  titulo: z.string().min(1),
+  severidade: z.string().min(1),
+  selecionadaEm: z.string().min(1),
+  correcao: z.string().min(1),
+  probe: z.string().min(1),
+  alvo: z.string().min(1),
+});
 
-type Registro = {
-  atualizadoEm: string;
-  findings: Finding[];
-  aceitos: { id: string; titulo: string; justificativa: string }[];
-};
+const registroSchema = z
+  .object({
+    atualizadoEm: z.string().min(1),
+    findings: z.array(findingSchema),
+    aceitos: z.array(
+      z.object({
+        id: z.string().min(1),
+        titulo: z.string().min(1),
+        justificativa: z.string().min(1),
+      }),
+    ),
+  })
+  // Metadados de certificação convivem no mesmo arquivo e são preservados.
+  .passthrough();
+
+type Finding = z.infer<typeof findingSchema>;
+type Registro = z.infer<typeof registroSchema>;
 
 type Resultado = {
   finding: Finding;
@@ -167,10 +181,34 @@ function selo(s: Suite) {
   return s.bloqueante === false ? "⚠️ INDISPONÍVEL" : "🔴 FAIL";
 }
 
+function carregarRegistro(): Registro {
+  const arquivo = path.resolve(raiz, "certification/security-findings.json");
+  let bruto: unknown;
+  try {
+    bruto = JSON.parse(readFileSync(arquivo, "utf8"));
+  } catch (erro) {
+    console.error(
+      `[security:scan] registry inválido: não foi possível ler/parsear ${arquivo} — ${(erro as Error).message}`,
+    );
+    process.exit(1);
+  }
+  const parsed = registroSchema.safeParse(bruto);
+  if (!parsed.success) {
+    console.error(`[security:scan] registry fora do contrato em ${arquivo}:`);
+    for (const issue of parsed.error.issues) {
+      console.error(`  - ${issue.path.join(".") || "(raiz)"}: ${issue.message}`);
+    }
+    console.error(
+      "[security:scan] esperado: { atualizadoEm: string, findings: Finding[], aceitos: Aceito[] }",
+    );
+    process.exit(1);
+  }
+  return parsed.data;
+}
+
 async function main() {
-  const registro = JSON.parse(
-    readFileSync(path.resolve(raiz, "certification/security-findings.json"), "utf8"),
-  ) as Registro;
+  const registro = carregarRegistro();
+
 
   const backendAlcancavel = Boolean(url && anonKey);
   const resultados: Resultado[] = [];

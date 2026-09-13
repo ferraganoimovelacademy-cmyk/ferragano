@@ -1,4 +1,5 @@
 {
+  "atualizadoEm": "2026-09-13",
   "project": "Ferragano One",
   "version": "1.0.0",
   "status": "Production Certified",
@@ -10,5 +11,7 @@
     { "id": "A02", "name": "SEO & Meta", "status": "passed" },
     { "id": "A03", "name": "UX Consistency", "status": "passed" }
   ],
-  "checksum": "certified_v1_0_0_rc"
+  "checksum": "certified_v1_0_0_rc",
+  "findings": [],
+  "aceitos": []
 }
