@@ -46,7 +46,7 @@ export function AdminGuard({ module, minimo = "leitura", children }: Props) {
           seu aplicativo autenticador e entre novamente para liberar o acesso.
         </p>
         <Button asChild className="mt-6">
-          <Link to="/app/seguranca">Configurar 2FA</Link>
+          <Link to="/app/configuracoes">Configurar 2FA</Link>
         </Button>
       </div>
     );
