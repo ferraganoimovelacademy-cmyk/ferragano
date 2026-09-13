@@ -181,10 +181,34 @@ function selo(s: Suite) {
   return s.bloqueante === false ? "⚠️ INDISPONÍVEL" : "🔴 FAIL";
 }
 
+function carregarRegistro(): Registro {
+  const arquivo = path.resolve(raiz, "certification/security-findings.json");
+  let bruto: unknown;
+  try {
+    bruto = JSON.parse(readFileSync(arquivo, "utf8"));
+  } catch (erro) {
+    console.error(
+      `[security:scan] registry inválido: não foi possível ler/parsear ${arquivo} — ${(erro as Error).message}`,
+    );
+    process.exit(1);
+  }
+  const parsed = registroSchema.safeParse(bruto);
+  if (!parsed.success) {
+    console.error(`[security:scan] registry fora do contrato em ${arquivo}:`);
+    for (const issue of parsed.error.issues) {
+      console.error(`  - ${issue.path.join(".") || "(raiz)"}: ${issue.message}`);
+    }
+    console.error(
+      "[security:scan] esperado: { atualizadoEm: string, findings: Finding[], aceitos: Aceito[] }",
+    );
+    process.exit(1);
+  }
+  return parsed.data;
+}
+
 async function main() {
-  const registro = JSON.parse(
-    readFileSync(path.resolve(raiz, "certification/security-findings.json"), "utf8"),
-  ) as Registro;
+  const registro = carregarRegistro();
+
 
   const backendAlcancavel = Boolean(url && anonKey);
   const resultados: Resultado[] = [];
