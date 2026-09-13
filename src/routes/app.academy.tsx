@@ -110,7 +110,6 @@ function AcademyPage() {
     );
   }
 
-
   return (
     <div className="space-y-6">
       <header className="space-y-2">
@@ -186,7 +185,6 @@ function AcademyPage() {
           </Button>
         </div>
       ) : null}
-
 
       <div className="space-y-5">
         {ACADEMY_TRILHA.map((modulo) => (
@@ -312,7 +310,6 @@ function AcademyPage() {
           )}
         </section>
       ) : null}
-
     </div>
   );
 }
