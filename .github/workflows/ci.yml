@@ -1,0 +1,23 @@
+name: Ferragano CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install dependencies
+        run: bun install
+      - name: Typecheck
+        run: bunx tsgo
+      - name: Test
+        run: bun run test
+      - name: Validate Static Routes
+        run: bun scripts/ci/check-static-routes.ts
