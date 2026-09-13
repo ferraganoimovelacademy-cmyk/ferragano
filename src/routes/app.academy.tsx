@@ -253,10 +253,14 @@ function AcademyPage() {
               Código {certificado.codigo}
             </p>
           </div>
-        ) : (
+        ) : progressoOk ? (
           <p className="mt-2 text-sm text-muted-foreground">
             Faltam {progresso.obrigatoriasPendentes.length} lições obrigatórias para liberar o
             certificado.
+          </p>
+        ) : (
+          <p className="mt-2 text-sm text-muted-foreground">
+            O certificado só pode ser avaliado depois de carregar seu progresso.
           </p>
         )}
       </section>
@@ -264,7 +268,26 @@ function AcademyPage() {
       {admin ? (
         <section className="rounded-lg border border-border bg-card p-5">
           <h2 className="font-display text-base font-semibold">Progresso da equipe</h2>
-          {equipeQuery.data?.items?.length ? (
+          {equipeQuery.isLoading ? (
+            <p role="status" aria-live="polite" className="mt-2 text-sm text-muted-foreground">
+              Carregando o progresso da equipe…
+            </p>
+          ) : equipeQuery.isError ? (
+            <div role="alert" aria-live="assertive" className="mt-3">
+              <p className="text-sm font-medium">
+                Não foi possível carregar o progresso da equipe.
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-3"
+                disabled={equipeQuery.isFetching}
+                onClick={() => void equipeQuery.refetch()}
+              >
+                Tentar novamente
+              </Button>
+            </div>
+          ) : equipeQuery.data?.items?.length ? (
             <ul className="mt-3 space-y-2">
               {equipeQuery.data.items.map((membro) => {
                 const p = calcularProgresso(membro.licoes);
@@ -289,6 +312,7 @@ function AcademyPage() {
           )}
         </section>
       ) : null}
+
     </div>
   );
 }
