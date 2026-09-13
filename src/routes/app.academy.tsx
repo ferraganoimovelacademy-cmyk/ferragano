@@ -53,16 +53,22 @@ function AcademyPage() {
   const fetchEquipe = useServerFn(listarProgressoEquipe);
   const marcar = useServerFn(marcarLicaoAcademy);
 
+  // Cache isolado por workspace **e** usuário: o serviço filtra por
+  // context.userId, então a chave precisa refletir as duas dimensões.
+  const progressoKey = ["academy-progresso", workspaceId, userId] as const;
+  const equipeKey = ["academy-equipe", workspaceId] as const;
+  const pronto = Boolean(workspaceId) && Boolean(userId);
+
   const progressoQuery = useQuery({
-    queryKey: ["academy-progresso", workspaceId],
+    queryKey: progressoKey,
     queryFn: () => fetchProgresso({ data: { workspaceId: workspaceId! } }),
-    enabled: Boolean(workspaceId),
+    enabled: pronto,
   });
 
   const equipeQuery = useQuery({
-    queryKey: ["academy-equipe", workspaceId],
+    queryKey: equipeKey,
     queryFn: () => fetchEquipe({ data: { workspaceId: workspaceId! } }),
-    enabled: Boolean(workspaceId) && admin,
+    enabled: pronto && admin,
   });
 
   const concluidas = useMemo(
@@ -79,12 +85,18 @@ function AcademyPage() {
     mutationFn: (vars: { licaoKey: string; concluida: boolean }) =>
       marcar({ data: { workspaceId: workspaceId!, ...vars } }),
     onSuccess: (_res, vars) => {
-      queryClient.invalidateQueries({ queryKey: ["academy-progresso", workspaceId] });
-      queryClient.invalidateQueries({ queryKey: ["academy-equipe", workspaceId] });
+      // Mutation individual afeta somente o progresso do próprio usuário.
+      queryClient.invalidateQueries({ queryKey: progressoKey });
       toast.success(vars.concluida ? "Lição concluída." : "Lição reaberta.");
     },
     onError: (error: Error) => toast.error(error.message),
   });
+
+  const progressoErro = progressoQuery.isError;
+  // Erro nunca é tratado como lista vazia: dados só valem quando a leitura deu certo.
+  const progressoOk = progressoQuery.isSuccess;
+  const ocupado = mutation.isPending || (progressoQuery.isFetching && !progressoQuery.isLoading);
+  const travado = !progressoOk || ocupado;
 
   if (!workspaceId) {
     return (
@@ -97,6 +109,7 @@ function AcademyPage() {
       </div>
     );
   }
+
 
   return (
     <div className="space-y-6">
