@@ -53,16 +53,22 @@ function AcademyPage() {
   const fetchEquipe = useServerFn(listarProgressoEquipe);
   const marcar = useServerFn(marcarLicaoAcademy);
 
+  // Cache isolado por workspace **e** usuário: o serviço filtra por
+  // context.userId, então a chave precisa refletir as duas dimensões.
+  const progressoKey = ["academy-progresso", workspaceId, userId] as const;
+  const equipeKey = ["academy-equipe", workspaceId] as const;
+  const pronto = Boolean(workspaceId) && Boolean(userId);
+
   const progressoQuery = useQuery({
-    queryKey: ["academy-progresso", workspaceId],
+    queryKey: progressoKey,
     queryFn: () => fetchProgresso({ data: { workspaceId: workspaceId! } }),
-    enabled: Boolean(workspaceId),
+    enabled: pronto,
   });
 
   const equipeQuery = useQuery({
-    queryKey: ["academy-equipe", workspaceId],
+    queryKey: equipeKey,
     queryFn: () => fetchEquipe({ data: { workspaceId: workspaceId! } }),
-    enabled: Boolean(workspaceId) && admin,
+    enabled: pronto && admin,
   });
 
   const concluidas = useMemo(
@@ -79,12 +85,18 @@ function AcademyPage() {
     mutationFn: (vars: { licaoKey: string; concluida: boolean }) =>
       marcar({ data: { workspaceId: workspaceId!, ...vars } }),
     onSuccess: (_res, vars) => {
-      queryClient.invalidateQueries({ queryKey: ["academy-progresso", workspaceId] });
-      queryClient.invalidateQueries({ queryKey: ["academy-equipe", workspaceId] });
+      // Mutation individual afeta somente o progresso do próprio usuário.
+      queryClient.invalidateQueries({ queryKey: progressoKey });
       toast.success(vars.concluida ? "Lição concluída." : "Lição reaberta.");
     },
     onError: (error: Error) => toast.error(error.message),
   });
+
+  const progressoErro = progressoQuery.isError;
+  // Erro nunca é tratado como lista vazia: dados só valem quando a leitura deu certo.
+  const progressoOk = progressoQuery.isSuccess;
+  const ocupado = mutation.isPending || (progressoQuery.isFetching && !progressoQuery.isLoading);
+  const travado = !progressoOk || ocupado;
 
   if (!workspaceId) {
     return (
@@ -142,8 +154,36 @@ function AcademyPage() {
         </div>
       </section>
 
-      {progressoQuery.isLoading ? (
-        <p className="text-sm text-muted-foreground">Carregando sua trilha…</p>
+      <div role="status" aria-live="polite" className="min-h-5 text-sm text-muted-foreground">
+        {progressoQuery.isLoading
+          ? "Carregando sua trilha…"
+          : mutation.isPending
+            ? "Salvando sua lição…"
+            : progressoQuery.isFetching
+              ? "Atualizando seu progresso…"
+              : ""}
+      </div>
+
+      {progressoErro ? (
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="rounded-lg border border-destructive/40 bg-destructive/5 p-4"
+        >
+          <p className="text-sm font-medium">Não foi possível carregar seu progresso.</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Suas lições não foram perdidas — apenas não conseguimos ler agora.
+          </p>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-3"
+            disabled={progressoQuery.isFetching}
+            onClick={() => void progressoQuery.refetch()}
+          >
+            Tentar novamente
+          </Button>
+        </div>
       ) : null}
 
       <div className="space-y-5">
@@ -165,7 +205,7 @@ function AcademyPage() {
                     <Checkbox
                       id={inputId}
                       checked={feita}
-                      disabled={mutation.isPending}
+                      disabled={travado}
                       onCheckedChange={(checked) =>
                         mutation.mutate({ licaoKey: licao.key, concluida: checked === true })
                       }
@@ -211,10 +251,14 @@ function AcademyPage() {
               Código {certificado.codigo}
             </p>
           </div>
-        ) : (
+        ) : progressoOk ? (
           <p className="mt-2 text-sm text-muted-foreground">
             Faltam {progresso.obrigatoriasPendentes.length} lições obrigatórias para liberar o
             certificado.
+          </p>
+        ) : (
+          <p className="mt-2 text-sm text-muted-foreground">
+            O certificado só pode ser avaliado depois de carregar seu progresso.
           </p>
         )}
       </section>
@@ -222,7 +266,26 @@ function AcademyPage() {
       {admin ? (
         <section className="rounded-lg border border-border bg-card p-5">
           <h2 className="font-display text-base font-semibold">Progresso da equipe</h2>
-          {equipeQuery.data?.items?.length ? (
+          {equipeQuery.isLoading ? (
+            <p role="status" aria-live="polite" className="mt-2 text-sm text-muted-foreground">
+              Carregando o progresso da equipe…
+            </p>
+          ) : equipeQuery.isError ? (
+            <div role="alert" aria-live="assertive" className="mt-3">
+              <p className="text-sm font-medium">
+                Não foi possível carregar o progresso da equipe.
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-3"
+                disabled={equipeQuery.isFetching}
+                onClick={() => void equipeQuery.refetch()}
+              >
+                Tentar novamente
+              </Button>
+            </div>
+          ) : equipeQuery.data?.items?.length ? (
             <ul className="mt-3 space-y-2">
               {equipeQuery.data.items.map((membro) => {
                 const p = calcularProgresso(membro.licoes);
