@@ -13,25 +13,39 @@ import { execFile } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { promisify } from "node:util";
+import { z } from "zod";
 
 const exec = promisify(execFile);
 const raiz = process.cwd();
 
-type Finding = {
-  id: string;
-  titulo: string;
-  severidade: string;
-  selecionadaEm: string;
-  correcao: string;
-  probe: string;
-  alvo: string;
-};
+/** Contrato de entrada de `certification/security-findings.json`. */
+const findingSchema = z.object({
+  id: z.string().min(1),
+  titulo: z.string().min(1),
+  severidade: z.string().min(1),
+  selecionadaEm: z.string().min(1),
+  correcao: z.string().min(1),
+  probe: z.string().min(1),
+  alvo: z.string().min(1),
+});
 
-type Registro = {
-  atualizadoEm: string;
-  findings: Finding[];
-  aceitos: { id: string; titulo: string; justificativa: string }[];
-};
+const registroSchema = z
+  .object({
+    atualizadoEm: z.string().min(1),
+    findings: z.array(findingSchema),
+    aceitos: z.array(
+      z.object({
+        id: z.string().min(1),
+        titulo: z.string().min(1),
+        justificativa: z.string().min(1),
+      }),
+    ),
+  })
+  // Metadados de certificação convivem no mesmo arquivo e são preservados.
+  .passthrough();
+
+type Finding = z.infer<typeof findingSchema>;
+type Registro = z.infer<typeof registroSchema>;
 
 type Resultado = {
   finding: Finding;
