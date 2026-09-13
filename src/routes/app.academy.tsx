@@ -207,7 +207,7 @@ function AcademyPage() {
                     <Checkbox
                       id={inputId}
                       checked={feita}
-                      disabled={mutation.isPending}
+                      disabled={travado}
                       onCheckedChange={(checked) =>
                         mutation.mutate({ licaoKey: licao.key, concluida: checked === true })
                       }
