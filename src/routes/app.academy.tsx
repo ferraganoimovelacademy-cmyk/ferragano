@@ -155,9 +155,38 @@ function AcademyPage() {
         </div>
       </section>
 
-      {progressoQuery.isLoading ? (
-        <p className="text-sm text-muted-foreground">Carregando sua trilha…</p>
+      <div role="status" aria-live="polite" className="min-h-5 text-sm text-muted-foreground">
+        {progressoQuery.isLoading
+          ? "Carregando sua trilha…"
+          : mutation.isPending
+            ? "Salvando sua lição…"
+            : progressoQuery.isFetching
+              ? "Atualizando seu progresso…"
+              : ""}
+      </div>
+
+      {progressoErro ? (
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="rounded-lg border border-destructive/40 bg-destructive/5 p-4"
+        >
+          <p className="text-sm font-medium">Não foi possível carregar seu progresso.</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Suas lições não foram perdidas — apenas não conseguimos ler agora.
+          </p>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-3"
+            disabled={progressoQuery.isFetching}
+            onClick={() => void progressoQuery.refetch()}
+          >
+            Tentar novamente
+          </Button>
+        </div>
       ) : null}
+
 
       <div className="space-y-5">
         {ACADEMY_TRILHA.map((modulo) => (
