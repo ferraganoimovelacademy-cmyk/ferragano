@@ -56,7 +56,8 @@ function AcademyPage() {
   // Cache isolado por workspace **e** usuário: o serviço filtra por
   // context.userId, então a chave precisa refletir as duas dimensões.
   const progressoKey = ["academy-progresso", workspaceId, userId] as const;
-  const equipeKey = ["academy-equipe", workspaceId] as const;
+  // A autorização/RLS da equipe varia por usuário (admin), então a key também leva userId.
+  const equipeKey = ["academy-equipe", workspaceId, userId] as const;
   const pronto = Boolean(workspaceId) && Boolean(userId);
 
   const progressoQuery = useQuery({
@@ -239,7 +240,7 @@ function AcademyPage() {
 
       <section className="rounded-lg border border-border bg-card p-5">
         <h2 className="font-display text-base font-semibold">Certificado</h2>
-        {certificado ? (
+        {progressoOk && certificado ? (
           <div className="mt-3 rounded-md border border-primary/40 bg-primary/5 p-4">
             <p className="text-sm text-muted-foreground">Certificado de conclusão</p>
             <p className="mt-1 font-display text-lg font-semibold">{certificado.nome}</p>
