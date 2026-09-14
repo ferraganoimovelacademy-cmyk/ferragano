@@ -13,16 +13,30 @@ import { submitLeadPublico } from "@/lib/platform/vitrine.functions";
  * Formulário público de captação. A validação real acontece no servidor —
  * aqui só evitamos ida e volta desnecessária.
  */
+/** Contexto de aquisição lido do próprio navegador (rota + parâmetros utm). */
+function contextoAquisicao() {
+  if (typeof window === "undefined") return { rota: null as string | null, utm: {} };
+  const p = new URLSearchParams(window.location.search);
+  const utm: Record<string, string> = {};
+  for (const chave of ["source", "medium", "campaign", "term", "content"]) {
+    const valor = p.get(`utm_${chave}`);
+    if (valor) utm[chave] = valor.slice(0, 160);
+  }
+  return { rota: window.location.pathname.slice(0, 160), utm };
+}
+
 export function VitrineContato({
   empreendimentoId,
   empreendimentoNome,
   landingPageId,
+  unidadeId,
   ctaTexto,
   compact = false,
 }: {
   empreendimentoId?: string | null;
   empreendimentoNome?: string | null;
   landingPageId?: string | null;
+  unidadeId?: string | null;
   ctaTexto?: string | null;
   compact?: boolean;
 }) {
@@ -36,11 +50,13 @@ export function VitrineContato({
         data: {
           empreendimentoId: empreendimentoId ?? null,
           landingPageId: landingPageId ?? null,
+          unidadeId: unidadeId ?? null,
           nome: form.nome.trim(),
           email: form.email.trim(),
           telefone: form.telefone.trim(),
           mensagem: form.mensagem.trim(),
           origem: "site" as const,
+          ...contextoAquisicao(),
         },
       }),
     onSuccess: () => {
