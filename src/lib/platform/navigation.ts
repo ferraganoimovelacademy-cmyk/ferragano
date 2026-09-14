@@ -55,6 +55,7 @@ export const appNav: AppNavItem[] = [
     adminOnly: true,
   },
   { to: "/app/oportunidades", label: "Oportunidades", icon: "trending_up", domain: "comercial" },
+  { to: "/app/leads-site", label: "Leads da vitrine", icon: "campaign", domain: "comercial" },
   {
     to: "/app/funis",
     label: "Funis de venda",
