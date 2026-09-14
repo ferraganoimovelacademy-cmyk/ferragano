@@ -58,6 +58,7 @@ import { Route as AppImportarRouteImport } from './routes/app.importar'
 import { Route as AppInstitucionalRouteImport } from './routes/app.institucional'
 import { Route as AppKnowledgeRouteImport } from './routes/app.knowledge'
 import { Route as AppLandingRouteImport } from './routes/app.landing'
+import { Route as AppLeadsSiteRouteImport } from './routes/app.leads-site'
 import { Route as AppMarketingRouteImport } from './routes/app.marketing'
 import { Route as AppMemoriaRouteImport } from './routes/app.memoria'
 import { Route as AppMercadoRouteImport } from './routes/app.mercado'
@@ -348,6 +349,11 @@ const AppLandingRoute = AppLandingRouteImport.update({
   path: '/landing',
   getParentRoute: () => AppRoute,
 } as any)
+const AppLeadsSiteRoute = AppLeadsSiteRouteImport.update({
+  id: '/leads-site',
+  path: '/leads-site',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppMarketingRoute = AppMarketingRouteImport.update({
   id: '/marketing',
   path: '/marketing',
@@ -629,6 +635,7 @@ export interface FileRoutesByFullPath {
   '/app/institucional': typeof AppInstitucionalRoute
   '/app/knowledge': typeof AppKnowledgeRoute
   '/app/landing': typeof AppLandingRoute
+  '/app/leads-site': typeof AppLeadsSiteRoute
   '/app/marketing': typeof AppMarketingRoute
   '/app/memoria': typeof AppMemoriaRoute
   '/app/mercado': typeof AppMercadoRoute
@@ -721,6 +728,7 @@ export interface FileRoutesByTo {
   '/app/institucional': typeof AppInstitucionalRoute
   '/app/knowledge': typeof AppKnowledgeRoute
   '/app/landing': typeof AppLandingRoute
+  '/app/leads-site': typeof AppLeadsSiteRoute
   '/app/marketing': typeof AppMarketingRoute
   '/app/memoria': typeof AppMemoriaRoute
   '/app/mercado': typeof AppMercadoRoute
@@ -814,6 +822,7 @@ export interface FileRoutesById {
   '/app/institucional': typeof AppInstitucionalRoute
   '/app/knowledge': typeof AppKnowledgeRoute
   '/app/landing': typeof AppLandingRoute
+  '/app/leads-site': typeof AppLeadsSiteRoute
   '/app/marketing': typeof AppMarketingRoute
   '/app/memoria': typeof AppMemoriaRoute
   '/app/mercado': typeof AppMercadoRoute
@@ -911,6 +920,7 @@ export interface FileRouteTypes {
     | '/app/institucional'
     | '/app/knowledge'
     | '/app/landing'
+    | '/app/leads-site'
     | '/app/marketing'
     | '/app/memoria'
     | '/app/mercado'
@@ -1003,6 +1013,7 @@ export interface FileRouteTypes {
     | '/app/institucional'
     | '/app/knowledge'
     | '/app/landing'
+    | '/app/leads-site'
     | '/app/marketing'
     | '/app/memoria'
     | '/app/mercado'
@@ -1095,6 +1106,7 @@ export interface FileRouteTypes {
     | '/app/institucional'
     | '/app/knowledge'
     | '/app/landing'
+    | '/app/leads-site'
     | '/app/marketing'
     | '/app/memoria'
     | '/app/mercado'
@@ -1519,6 +1531,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppLandingRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/leads-site': {
+      id: '/app/leads-site'
+      path: '/leads-site'
+      fullPath: '/app/leads-site'
+      preLoaderRoute: typeof AppLeadsSiteRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/marketing': {
       id: '/app/marketing'
       path: '/marketing'
@@ -1890,6 +1909,7 @@ interface AppRouteChildren {
   AppInstitucionalRoute: typeof AppInstitucionalRoute
   AppKnowledgeRoute: typeof AppKnowledgeRoute
   AppLandingRoute: typeof AppLandingRoute
+  AppLeadsSiteRoute: typeof AppLeadsSiteRoute
   AppMarketingRoute: typeof AppMarketingRoute
   AppMemoriaRoute: typeof AppMemoriaRoute
   AppMercadoRoute: typeof AppMercadoRoute
@@ -1944,6 +1964,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppInstitucionalRoute: AppInstitucionalRoute,
   AppKnowledgeRoute: AppKnowledgeRoute,
   AppLandingRoute: AppLandingRoute,
+  AppLeadsSiteRoute: AppLeadsSiteRoute,
   AppMarketingRoute: AppMarketingRoute,
   AppMemoriaRoute: AppMemoriaRoute,
   AppMercadoRoute: AppMercadoRoute,
