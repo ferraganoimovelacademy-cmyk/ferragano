@@ -32,7 +32,7 @@ export const siteLeadSchema = z.object({
   origem: z.string(),
   campanha: z.string().nullable().default(null),
   rota_origem: z.string().nullable().default(null),
-  utm: z.record(z.string(), z.unknown()).nullable().default(null),
+  utm: z.record(z.string(), z.string()).nullable().default(null),
   score: z.number().nullable().default(null),
   temperatura: z.string().nullable().default(null),
   empreendimento: z.string().nullable().default(null),
