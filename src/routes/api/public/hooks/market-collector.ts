@@ -1,29 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { authenticateCronRequest } from "@/integrations/supabase/cron-auth";
 
 /**
  * SPRINT 25 — Market Collector.
  *
  * Chamado pelo pg_cron uma vez por dia. Rota pública (o cron vem de fora),
- * autenticada pela apikey do projeto. Nunca retorna PII: apenas contadores.
+ * autenticada pelo segredo de cron (authenticateCronRequest). Nunca retorna PII: apenas contadores.
  */
 export const Route = createFileRoute("/api/public/hooks/market-collector")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const apikey =
-          request.headers.get("apikey") ??
-          request.headers.get("authorization")?.replace(/^Bearer /i, "") ??
-          "";
-
-        const esperado =
-          process.env["SUPABASE_PUBLISHABLE_KEY"] ?? process.env["SUPABASE_ANON_KEY"] ?? "";
-
-        if (!esperado || apikey !== esperado) {
-          return new Response(JSON.stringify({ error: "unauthorized" }), {
-            status: 401,
-            headers: { "content-type": "application/json" },
-          });
-        }
+        const negado = await authenticateCronRequest(request);
+        if (negado) return negado;
 
         const inicio = Date.now();
         try {
