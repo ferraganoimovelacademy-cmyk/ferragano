@@ -7,6 +7,7 @@ import {
   calcularScore,
   temperaturaPorScore,
 } from "@/lib/platform/comercial";
+import { dedupeKeyLead, utmSchema } from "@/lib/platform/leads-site";
 
 /**
  * Vitrine pública — leitura SSR do portfólio e captação de leads do site.
