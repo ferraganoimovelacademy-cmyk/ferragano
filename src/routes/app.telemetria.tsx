@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { SiteLayout } from '@/components/platform/SiteLayout';
 import { Badge } from '@/components/ui/badge';
 import { Icon } from '@/components/Icon';
 import { useState, useMemo } from 'react';
@@ -9,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
-export const Route = createFileRoute('/_authenticated/app/telemetria')({
+export const Route = createFileRoute('/app/telemetria')({
   component: TelemetriaPage,
 });
 
@@ -17,7 +16,7 @@ function TelemetriaPage() {
   const [search, setSearch] = useState('');
   const [filterOk, setFilterOk] = useState<'all' | 'success' | 'fail'>('all');
 
-  const { data: logs, isLoading } = useQuery({
+  const { data: logs, isLoading, isError, error, refetch, isFetching } = useQuery({
     queryKey: ['system-logs'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -85,8 +84,7 @@ function TelemetriaPage() {
   };
 
   return (
-    <SiteLayout>
-      <div className="container mx-auto py-10 px-4 print:p-0">
+    <div className="container mx-auto py-10 px-4 print:p-0">
         <div className="flex items-center justify-between mb-8 print:hidden">
           <div>
             <h1 className="text-3xl font-display font-bold tracking-tight">Telemetria do Sistema</h1>
@@ -102,7 +100,32 @@ function TelemetriaPage() {
           </div>
         </div>
 
-        {failedRoutesSummary.length > 0 && (
+        {isError && (
+          <div
+            role="alert"
+            aria-live="assertive"
+            className="mb-8 panel p-6 border-rose-500/30 bg-rose-500/5"
+          >
+            <h3 className="text-sm font-semibold text-rose-600 flex items-center gap-2">
+              <Icon name="error" size={16} /> Não foi possível carregar a telemetria
+            </h3>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {(error as Error)?.message ?? 'Erro inesperado ao ler os registros.'} Isto não
+              significa que não há eventos: a leitura falhou.
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-4"
+              onClick={() => void refetch()}
+              disabled={isFetching}
+            >
+              {isFetching ? 'Tentando novamente…' : 'Tentar novamente'}
+            </Button>
+          </div>
+        )}
+
+        {!isError && failedRoutesSummary.length > 0 && (
           <div className="mb-8 grid gap-4 md:grid-cols-1 print:hidden">
             <div className="panel p-6 border-rose-500/20 bg-rose-500/5">
               <h3 className="text-sm font-semibold text-rose-600 mb-4 flex items-center gap-2">
@@ -156,7 +179,9 @@ function TelemetriaPage() {
             </thead>
             <tbody className="divide-y divide-border">
               {isLoading ? (
-                <tr><td colSpan={4} className="px-6 py-8 text-center text-muted-foreground">Carregando logs...</td></tr>
+                <tr><td colSpan={4} className="px-6 py-8 text-center text-muted-foreground" role="status" aria-live="polite">Carregando logs...</td></tr>
+              ) : isError ? (
+                <tr><td colSpan={4} className="px-6 py-8 text-center text-muted-foreground">Leitura indisponível — use “Tentar novamente”.</td></tr>
               ) : filteredLogs.length === 0 ? (
                 <tr><td colSpan={4} className="px-6 py-8 text-center text-muted-foreground">Nenhum evento encontrado.</td></tr>
               ) : filteredLogs.map((log) => (
@@ -178,7 +203,6 @@ function TelemetriaPage() {
             </tbody>
           </table>
         </div>
-      </div>
-    </SiteLayout>
+    </div>
   );
 }

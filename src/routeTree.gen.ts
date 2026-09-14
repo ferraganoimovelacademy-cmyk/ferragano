@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AcademyRouteImport } from './routes/academy'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -73,6 +72,7 @@ import { Route as AppPlatformRouteImport } from './routes/app.platform'
 import { Route as AppPortalClienteRouteImport } from './routes/app.portal-cliente'
 import { Route as AppRadarRouteImport } from './routes/app.radar'
 import { Route as AppRelatoriosRouteImport } from './routes/app.relatorios'
+import { Route as AppTelemetriaRouteImport } from './routes/app.telemetria'
 import { Route as AppUsuariosRouteImport } from './routes/app.usuarios'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
@@ -83,7 +83,6 @@ import { Route as EmpreendimentosCuryRouteImport } from './routes/empreendimento
 import { Route as EnSplatRouteImport } from './routes/en.$'
 import { Route as EsSplatRouteImport } from './routes/es.$'
 import { Route as LpSlugRouteImport } from './routes/lp.$slug'
-import { Route as AuthenticatedAppTelemetriaRouteImport } from './routes/_authenticated/app/telemetria'
 import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
 import { Route as AppAdminHealthRouteImport } from './routes/app.admin.health'
@@ -107,10 +106,6 @@ import { Route as EmpreendimentosCurySlugUnidadeUnidadeIdRouteImport } from './r
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AcademyRoute = AcademyRouteImport.update({
@@ -423,6 +418,11 @@ const AppRelatoriosRoute = AppRelatoriosRouteImport.update({
   path: '/relatorios',
   getParentRoute: () => AppRoute,
 } as any)
+const AppTelemetriaRoute = AppTelemetriaRouteImport.update({
+  id: '/telemetria',
+  path: '/telemetria',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppUsuariosRoute = AppUsuariosRouteImport.update({
   id: '/usuarios',
   path: '/usuarios',
@@ -473,12 +473,6 @@ const LpSlugRoute = LpSlugRouteImport.update({
   path: '/lp/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedAppTelemetriaRoute =
-  AuthenticatedAppTelemetriaRouteImport.update({
-    id: '/app/telemetria',
-    path: '/app/telemetria',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
   id: '/api/public/health',
   path: '/api/public/health',
@@ -649,6 +643,7 @@ export interface FileRoutesByFullPath {
   '/app/portal-cliente': typeof AppPortalClienteRoute
   '/app/radar': typeof AppRadarRoute
   '/app/relatorios': typeof AppRelatoriosRoute
+  '/app/telemetria': typeof AppTelemetriaRoute
   '/app/usuarios': typeof AppUsuariosRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/construtoras/cury': typeof ConstrutorasCuryRoute
@@ -660,7 +655,6 @@ export interface FileRoutesByFullPath {
   '/app/': typeof AppIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/empreendimentos/': typeof EmpreendimentosIndexRoute
-  '/app/telemetria': typeof AuthenticatedAppTelemetriaRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/app/admin/health': typeof AppAdminHealthRoute
   '/app/pessoas/$id': typeof AppPessoasIdRoute
@@ -740,6 +734,7 @@ export interface FileRoutesByTo {
   '/app/portal-cliente': typeof AppPortalClienteRoute
   '/app/radar': typeof AppRadarRoute
   '/app/relatorios': typeof AppRelatoriosRoute
+  '/app/telemetria': typeof AppTelemetriaRoute
   '/app/usuarios': typeof AppUsuariosRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/construtoras/cury': typeof ConstrutorasCuryRoute
@@ -750,7 +745,6 @@ export interface FileRoutesByTo {
   '/app': typeof AppIndexRoute
   '/blog': typeof BlogIndexRoute
   '/empreendimentos': typeof EmpreendimentosIndexRoute
-  '/app/telemetria': typeof AuthenticatedAppTelemetriaRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/app/admin/health': typeof AppAdminHealthRoute
   '/app/pessoas/$id': typeof AppPessoasIdRoute
@@ -773,7 +767,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/academy': typeof AcademyRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
@@ -835,6 +828,7 @@ export interface FileRoutesById {
   '/app/portal-cliente': typeof AppPortalClienteRoute
   '/app/radar': typeof AppRadarRoute
   '/app/relatorios': typeof AppRelatoriosRoute
+  '/app/telemetria': typeof AppTelemetriaRoute
   '/app/usuarios': typeof AppUsuariosRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/construtoras/cury': typeof ConstrutorasCuryRoute
@@ -846,7 +840,6 @@ export interface FileRoutesById {
   '/app/': typeof AppIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/empreendimentos/': typeof EmpreendimentosIndexRoute
-  '/_authenticated/app/telemetria': typeof AuthenticatedAppTelemetriaRoute
   '/api/public/health': typeof ApiPublicHealthRoute
   '/app/admin/health': typeof AppAdminHealthRoute
   '/app/pessoas/$id': typeof AppPessoasIdRoute
@@ -932,6 +925,7 @@ export interface FileRouteTypes {
     | '/app/portal-cliente'
     | '/app/radar'
     | '/app/relatorios'
+    | '/app/telemetria'
     | '/app/usuarios'
     | '/blog/$slug'
     | '/construtoras/cury'
@@ -943,7 +937,6 @@ export interface FileRouteTypes {
     | '/app/'
     | '/blog/'
     | '/empreendimentos/'
-    | '/app/telemetria'
     | '/api/public/health'
     | '/app/admin/health'
     | '/app/pessoas/$id'
@@ -1023,6 +1016,7 @@ export interface FileRouteTypes {
     | '/app/portal-cliente'
     | '/app/radar'
     | '/app/relatorios'
+    | '/app/telemetria'
     | '/app/usuarios'
     | '/blog/$slug'
     | '/construtoras/cury'
@@ -1033,7 +1027,6 @@ export interface FileRouteTypes {
     | '/app'
     | '/blog'
     | '/empreendimentos'
-    | '/app/telemetria'
     | '/api/public/health'
     | '/app/admin/health'
     | '/app/pessoas/$id'
@@ -1055,7 +1048,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/_authenticated'
     | '/academy'
     | '/app'
     | '/auth'
@@ -1117,6 +1109,7 @@ export interface FileRouteTypes {
     | '/app/portal-cliente'
     | '/app/radar'
     | '/app/relatorios'
+    | '/app/telemetria'
     | '/app/usuarios'
     | '/blog/$slug'
     | '/construtoras/cury'
@@ -1128,7 +1121,6 @@ export interface FileRouteTypes {
     | '/app/'
     | '/blog/'
     | '/empreendimentos/'
-    | '/_authenticated/app/telemetria'
     | '/api/public/health'
     | '/app/admin/health'
     | '/app/pessoas/$id'
@@ -1152,7 +1144,6 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AcademyRoute: typeof AcademyRoute
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
@@ -1190,13 +1181,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/academy': {
@@ -1633,6 +1617,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRelatoriosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/telemetria': {
+      id: '/app/telemetria'
+      path: '/telemetria'
+      fullPath: '/app/telemetria'
+      preLoaderRoute: typeof AppTelemetriaRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/usuarios': {
       id: '/app/usuarios'
       path: '/usuarios'
@@ -1702,13 +1693,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/lp/$slug'
       preLoaderRoute: typeof LpSlugRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/app/telemetria': {
-      id: '/_authenticated/app/telemetria'
-      path: '/app/telemetria'
-      fullPath: '/app/telemetria'
-      preLoaderRoute: typeof AuthenticatedAppTelemetriaRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/public/health': {
       id: '/api/public/health'
@@ -1846,17 +1830,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAppTelemetriaRoute: typeof AuthenticatedAppTelemetriaRoute
-}
-
-const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAppTelemetriaRoute: AuthenticatedAppTelemetriaRoute,
-}
-
-const AuthenticatedRouteRouteWithChildren =
-  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
-
 interface AppAdminRouteChildren {
   AppAdminHealthRoute: typeof AppAdminHealthRoute
   AppAdminIndexRoute: typeof AppAdminIndexRoute
@@ -1931,6 +1904,7 @@ interface AppRouteChildren {
   AppPortalClienteRoute: typeof AppPortalClienteRoute
   AppRadarRoute: typeof AppRadarRoute
   AppRelatoriosRoute: typeof AppRelatoriosRoute
+  AppTelemetriaRoute: typeof AppTelemetriaRoute
   AppUsuariosRoute: typeof AppUsuariosRoute
   AppIndexRoute: typeof AppIndexRoute
   AppEmpreendimentosIndexRoute: typeof AppEmpreendimentosIndexRoute
@@ -1984,6 +1958,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPortalClienteRoute: AppPortalClienteRoute,
   AppRadarRoute: AppRadarRoute,
   AppRelatoriosRoute: AppRelatoriosRoute,
+  AppTelemetriaRoute: AppTelemetriaRoute,
   AppUsuariosRoute: AppUsuariosRoute,
   AppIndexRoute: AppIndexRoute,
   AppEmpreendimentosIndexRoute: AppEmpreendimentosIndexRoute,
@@ -2043,7 +2018,6 @@ const EmpreendimentosCuryRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AcademyRoute: AcademyRoute,
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
