@@ -27,7 +27,8 @@ if (diff.code !== 0) {
   console.error("[lint-changed] rodando lint apenas do diff local (HEAD~1).");
 }
 
-const fonte = diff.code === 0 ? diff.out : (await run(["git", "diff", "--name-only", "HEAD~1"])).out;
+const fonte =
+  diff.code === 0 ? diff.out : (await run(["git", "diff", "--name-only", "HEAD~1"])).out;
 
 const arquivos = fonte
   .split("\n")

@@ -14,14 +14,7 @@
 /* ─────────────────────────── 1. Verticais ─────────────────────────── */
 
 export type VerticalKey =
-  | "academy"
-  | "intelligence"
-  | "analytics"
-  | "ai"
-  | "labs"
-  | "ventures"
-  | "network"
-  | "capital";
+  "academy" | "intelligence" | "analytics" | "ai" | "labs" | "ventures" | "network" | "capital";
 
 export type VerticalStatus = "operacional" | "em_construcao" | "fundacao_pronta" | "bloqueada";
 
@@ -418,10 +411,7 @@ export const podeOperar = (
 };
 
 /** Escopo completo de uma persona sob um papel: o que ela vê e o que está vedado. */
-export const avaliarAcessoPersona = (
-  persona: PersonaKey,
-  papel: PapelUsuario,
-): AcessoPersona => {
+export const avaliarAcessoPersona = (persona: PersonaKey, papel: PapelUsuario): AcessoPersona => {
   const p = getPersona(persona);
   const acoes: AcessoAcao[] = p.acoes.map((a) => {
     const r = podeOperar(persona, papel, a.tela, a.acao);
@@ -711,8 +701,7 @@ export function avaliarLiquidez(p: PosicaoLiquidez): AvaliacaoLiquidez {
 
   if (coberturaPct > 70) motivos.push("antecipação acima de 70% da carteira");
   if (inadimplenciaPct > 5) motivos.push("inadimplência acima de 5%");
-  if (p.concentracaoMaiorSacado > 25)
-    motivos.push("concentração do maior sacado acima de 25%");
+  if (p.concentracaoMaiorSacado > 25) motivos.push("concentração do maior sacado acima de 25%");
   if (p.prazoMedioDias > 180) observacoes.push("prazo médio acima de 180 dias");
 
   return { apto: motivos.length === 0, motivos, observacoes, coberturaPct, inadimplenciaPct };
@@ -733,46 +722,176 @@ export type PerguntaOnboarding = {
 
 export const onboardingVerticais: Record<VerticalKey, PerguntaOnboarding[]> = {
   academy: [
-    { id: "AC1", pergunta: "Quais papéis usarão o produto no dia a dia?", evidencia: "lista de papéis em user_roles", bloqueante: true },
-    { id: "AC2", pergunta: "Qual trilha é obrigatória antes do primeiro acesso?", evidencia: "trilha marcada como obrigatória", bloqueante: true },
-    { id: "AC3", pergunta: "Quem acompanha a conclusão das trilhas?", evidencia: "responsável nomeado", bloqueante: false },
+    {
+      id: "AC1",
+      pergunta: "Quais papéis usarão o produto no dia a dia?",
+      evidencia: "lista de papéis em user_roles",
+      bloqueante: true,
+    },
+    {
+      id: "AC2",
+      pergunta: "Qual trilha é obrigatória antes do primeiro acesso?",
+      evidencia: "trilha marcada como obrigatória",
+      bloqueante: true,
+    },
+    {
+      id: "AC3",
+      pergunta: "Quem acompanha a conclusão das trilhas?",
+      evidencia: "responsável nomeado",
+      bloqueante: false,
+    },
   ],
   intelligence: [
-    { id: "IN1", pergunta: "O workspace autoriza participar de benchmark agregado?", evidencia: "consentimento registrado com data", bloqueante: true },
-    { id: "IN2", pergunta: "Quais métricas podem ser comparadas?", evidencia: "lista de métricas sem campo identificável", bloqueante: true },
-    { id: "IN3", pergunta: "Quem responde pelo uso do benchmark?", evidencia: "responsável de dados nomeado", bloqueante: true },
+    {
+      id: "IN1",
+      pergunta: "O workspace autoriza participar de benchmark agregado?",
+      evidencia: "consentimento registrado com data",
+      bloqueante: true,
+    },
+    {
+      id: "IN2",
+      pergunta: "Quais métricas podem ser comparadas?",
+      evidencia: "lista de métricas sem campo identificável",
+      bloqueante: true,
+    },
+    {
+      id: "IN3",
+      pergunta: "Quem responde pelo uso do benchmark?",
+      evidencia: "responsável de dados nomeado",
+      bloqueante: true,
+    },
   ],
   analytics: [
-    { id: "AN1", pergunta: "Quais indicadores decidem o mês?", evidencia: "indicadores mapeados nos read models", bloqueante: true },
-    { id: "AN2", pergunta: "Quem pode exportar dado?", evidencia: "papéis com permissão de exportação", bloqueante: true },
-    { id: "AN3", pergunta: "Qual a periodicidade da leitura executiva?", evidencia: "rotina agendada", bloqueante: false },
+    {
+      id: "AN1",
+      pergunta: "Quais indicadores decidem o mês?",
+      evidencia: "indicadores mapeados nos read models",
+      bloqueante: true,
+    },
+    {
+      id: "AN2",
+      pergunta: "Quem pode exportar dado?",
+      evidencia: "papéis com permissão de exportação",
+      bloqueante: true,
+    },
+    {
+      id: "AN3",
+      pergunta: "Qual a periodicidade da leitura executiva?",
+      evidencia: "rotina agendada",
+      bloqueante: false,
+    },
   ],
   ai: [
-    { id: "AI1", pergunta: "Quais personas serão habilitadas?", evidencia: "personas escolhidas com telas", bloqueante: true },
-    { id: "AI2", pergunta: "Quem aprova ação sugerida por IA?", evidencia: "aprovador nomeado", bloqueante: true },
-    { id: "AI3", pergunta: "Toda resposta deve exibir procedência?", evidencia: "configuração de explicabilidade ativa", bloqueante: true },
+    {
+      id: "AI1",
+      pergunta: "Quais personas serão habilitadas?",
+      evidencia: "personas escolhidas com telas",
+      bloqueante: true,
+    },
+    {
+      id: "AI2",
+      pergunta: "Quem aprova ação sugerida por IA?",
+      evidencia: "aprovador nomeado",
+      bloqueante: true,
+    },
+    {
+      id: "AI3",
+      pergunta: "Toda resposta deve exibir procedência?",
+      evidencia: "configuração de explicabilidade ativa",
+      bloqueante: true,
+    },
   ],
   labs: [
-    { id: "LB1", pergunta: "Qual hipótese será testada?", evidencia: "hipótese escrita com métrica", bloqueante: true },
-    { id: "LB2", pergunta: "Qual o prazo e o critério de encerramento?", evidencia: "prazo e critério registrados", bloqueante: true },
-    { id: "LB3", pergunta: "Quem registra o resultado observado?", evidencia: "responsável nomeado", bloqueante: false },
+    {
+      id: "LB1",
+      pergunta: "Qual hipótese será testada?",
+      evidencia: "hipótese escrita com métrica",
+      bloqueante: true,
+    },
+    {
+      id: "LB2",
+      pergunta: "Qual o prazo e o critério de encerramento?",
+      evidencia: "prazo e critério registrados",
+      bloqueante: true,
+    },
+    {
+      id: "LB3",
+      pergunta: "Quem registra o resultado observado?",
+      evidencia: "responsável nomeado",
+      bloqueante: false,
+    },
   ],
   ventures: [
-    { id: "VE1", pergunta: "Qual a tese do novo negócio?", evidencia: "tese versionada", bloqueante: true },
-    { id: "VE2", pergunta: "Qual evidência sustenta a tese?", evidencia: "evidências vinculadas", bloqueante: true },
-    { id: "VE3", pergunta: "Quem compõe o comitê de decisão?", evidencia: "comitê registrado", bloqueante: true },
+    {
+      id: "VE1",
+      pergunta: "Qual a tese do novo negócio?",
+      evidencia: "tese versionada",
+      bloqueante: true,
+    },
+    {
+      id: "VE2",
+      pergunta: "Qual evidência sustenta a tese?",
+      evidencia: "evidências vinculadas",
+      bloqueante: true,
+    },
+    {
+      id: "VE3",
+      pergunta: "Quem compõe o comitê de decisão?",
+      evidencia: "comitê registrado",
+      bloqueante: true,
+    },
   ],
   network: [
-    { id: "NW1", pergunta: "Quais parceiros entram na rede?", evidencia: "parceiros com CNPJ e CRECI validados", bloqueante: true },
-    { id: "NW2", pergunta: "Qual o escopo de dado compartilhado?", evidencia: "escopo declarado em contrato", bloqueante: true },
-    { id: "NW3", pergunta: "Como a comissão é dividida?", evidencia: "percentual em contrato assinado", bloqueante: true },
-    { id: "NW4", pergunta: "Como o contrato é rescindido?", evidencia: "cláusula de rescisão", bloqueante: true },
+    {
+      id: "NW1",
+      pergunta: "Quais parceiros entram na rede?",
+      evidencia: "parceiros com CNPJ e CRECI validados",
+      bloqueante: true,
+    },
+    {
+      id: "NW2",
+      pergunta: "Qual o escopo de dado compartilhado?",
+      evidencia: "escopo declarado em contrato",
+      bloqueante: true,
+    },
+    {
+      id: "NW3",
+      pergunta: "Como a comissão é dividida?",
+      evidencia: "percentual em contrato assinado",
+      bloqueante: true,
+    },
+    {
+      id: "NW4",
+      pergunta: "Como o contrato é rescindido?",
+      evidencia: "cláusula de rescisão",
+      bloqueante: true,
+    },
   ],
   capital: [
-    { id: "CP1", pergunta: "O gate H12 (LGPD) está encerrado?", evidencia: "gate H12 aprovado", bloqueante: true },
-    { id: "CP2", pergunta: "Qual o limite de antecipação da carteira?", evidencia: "política de limite aprovada", bloqueante: true },
-    { id: "CP3", pergunta: "Qual a concentração máxima por sacado?", evidencia: "política de concentração", bloqueante: true },
-    { id: "CP4", pergunta: "Quem audita cada operação?", evidencia: "trilha de auditoria definida", bloqueante: true },
+    {
+      id: "CP1",
+      pergunta: "O gate H12 (LGPD) está encerrado?",
+      evidencia: "gate H12 aprovado",
+      bloqueante: true,
+    },
+    {
+      id: "CP2",
+      pergunta: "Qual o limite de antecipação da carteira?",
+      evidencia: "política de limite aprovada",
+      bloqueante: true,
+    },
+    {
+      id: "CP3",
+      pergunta: "Qual a concentração máxima por sacado?",
+      evidencia: "política de concentração",
+      bloqueante: true,
+    },
+    {
+      id: "CP4",
+      pergunta: "Quem audita cada operação?",
+      evidencia: "trilha de auditoria definida",
+      bloqueante: true,
+    },
   ],
 };
 
