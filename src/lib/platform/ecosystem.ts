@@ -74,7 +74,9 @@ export const verticais: Vertical[] = [
     key: "intelligence",
     nome: "Ferragano Intelligence",
     camada: "conhecimento",
-    status: "operacional",
+    status: "bloqueada",
+    bloqueio:
+      "Gate H12 (LGPD) e ADR-034 em aberto: benchmark cross-workspace só libera com consentimento, agregação k >= 5 e supressão de células pequenas.",
     proposito: "Comparar o desempenho da empresa com o mercado sem expor dado de ninguém.",
     telas: ["/app/mercado", "/app/knowledge"],
     dependencias: ["ADR-034 — privacidade de agregação", "Gate H12 — LGPD"],
@@ -149,7 +151,9 @@ export const verticais: Vertical[] = [
     key: "capital",
     nome: "Ferragano Capital",
     camada: "rede",
-    status: "operacional",
+    status: "bloqueada",
+    bloqueio:
+      "Gate H12 (LGPD) em aberto e Network sem compliance aprovado: operação de recebíveis não pode ser habilitada.",
     proposito: "Antecipação e estruturação de recebíveis com risco medido.",
     telas: [],
     dependencias: ["Gate H12 — LGPD", "Network com compliance aprovado"],
