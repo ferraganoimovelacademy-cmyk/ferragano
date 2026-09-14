@@ -50,11 +50,13 @@ export function VitrineContato({
         data: {
           empreendimentoId: empreendimentoId ?? null,
           landingPageId: landingPageId ?? null,
+          unidadeId: unidadeId ?? null,
           nome: form.nome.trim(),
           email: form.email.trim(),
           telefone: form.telefone.trim(),
           mensagem: form.mensagem.trim(),
           origem: "site" as const,
+          ...contextoAquisicao(),
         },
       }),
     onSuccess: () => {
