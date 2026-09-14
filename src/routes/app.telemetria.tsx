@@ -54,8 +54,11 @@ function TelemetriaPage() {
     const failures = logs.filter((l) => !l.ok);
     const grouped = failures.reduce(
       (acc, curr) => {
-        const detail = curr.detalhe as any;
-        const route = detail?.input?.surface || detail?.message || curr.job;
+        const detail = (curr.detalhe ?? {}) as {
+          input?: { surface?: string };
+          message?: string;
+        };
+        const route = detail.input?.surface || detail.message || curr.job;
         if (!acc[route]) acc[route] = { count: 0, last: curr.started_at };
         acc[route].count++;
         if (new Date(curr.started_at) > new Date(acc[route].last))
