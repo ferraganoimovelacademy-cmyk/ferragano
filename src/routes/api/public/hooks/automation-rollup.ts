@@ -1,15 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { authenticateCronRequest } from "@/integrations/supabase/cron-auth";
 
 /**
  * SPRINT 19 — rollup diário da Automation Intelligence (ADR-017).
  * Materializa `automation_daily_metrics` a partir da fila ANTES de qualquer
- * purga do Outbox. Rota pública porque o cron vem de fora; a execução exige
- * o service role (a função de banco não é executável por `anon`).
+ * purga do Outbox. Rota pública porque o cron vem de fora, autenticada pelo
+ * segredo de cron (authenticateCronRequest): visitante nunca dispara o job.
  */
 export const Route = createFileRoute("/api/public/hooks/automation-rollup")({
   server: {
     handlers: {
-      POST: async () => {
+      POST: async ({ request }) => {
+        const negado = await authenticateCronRequest(request);
+        if (negado) return negado;
+
         try {
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
           const { data, error } = await supabaseAdmin.rpc(
