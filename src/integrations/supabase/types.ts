@@ -2129,8 +2129,10 @@ export type Database = {
       }
       opportunities: {
         Row: {
+          campanha: string | null
           created_at: string
           criado_por: string | null
+          dedupe_key: string | null
           empreendimento_id: string | null
           estagio: Database["public"]["Enums"]["lead_estagio"]
           fechado_em: string | null
@@ -2146,6 +2148,7 @@ export type Database = {
           proxima_acao: string | null
           proxima_acao_em: string | null
           responsavel_id: string | null
+          rota_origem: string | null
           score: number
           stage_entrou_em: string
           stage_id: string | null
@@ -2153,12 +2156,15 @@ export type Database = {
           titulo: string | null
           unidade_id: string | null
           updated_at: string
+          utm: Json
           valor: number | null
           workspace_id: string
         }
         Insert: {
+          campanha?: string | null
           created_at?: string
           criado_por?: string | null
+          dedupe_key?: string | null
           empreendimento_id?: string | null
           estagio?: Database["public"]["Enums"]["lead_estagio"]
           fechado_em?: string | null
@@ -2174,6 +2180,7 @@ export type Database = {
           proxima_acao?: string | null
           proxima_acao_em?: string | null
           responsavel_id?: string | null
+          rota_origem?: string | null
           score?: number
           stage_entrou_em?: string
           stage_id?: string | null
@@ -2181,12 +2188,15 @@ export type Database = {
           titulo?: string | null
           unidade_id?: string | null
           updated_at?: string
+          utm?: Json
           valor?: number | null
           workspace_id: string
         }
         Update: {
+          campanha?: string | null
           created_at?: string
           criado_por?: string | null
+          dedupe_key?: string | null
           empreendimento_id?: string | null
           estagio?: Database["public"]["Enums"]["lead_estagio"]
           fechado_em?: string | null
@@ -2202,6 +2212,7 @@ export type Database = {
           proxima_acao?: string | null
           proxima_acao_em?: string | null
           responsavel_id?: string | null
+          rota_origem?: string | null
           score?: number
           stage_entrou_em?: string
           stage_id?: string | null
@@ -2209,6 +2220,7 @@ export type Database = {
           titulo?: string | null
           unidade_id?: string | null
           updated_at?: string
+          utm?: Json
           valor?: number | null
           workspace_id?: string
         }
@@ -2278,6 +2290,58 @@ export type Database = {
           },
           {
             foreignKeyName: "opportunities_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      opportunity_stage_events: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          de_estagio: string | null
+          id: string
+          opportunity_id: string
+          para_estagio: string
+          workspace_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          de_estagio?: string | null
+          id?: string
+          opportunity_id: string
+          para_estagio: string
+          workspace_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          de_estagio?: string | null
+          id?: string
+          opportunity_id?: string
+          para_estagio?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opportunity_stage_events_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_stage_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "executive_360"
+            referencedColumns: ["workspace_id"]
+          },
+          {
+            foreignKeyName: "opportunity_stage_events_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
@@ -6033,6 +6097,10 @@ export type Database = {
         Returns: undefined
       }
       shares_workspace: { Args: { _a: string; _b: string }; Returns: boolean }
+      site_lead_funnel: {
+        Args: { _dias?: number; _workspace_id: string }
+        Returns: Json
+      }
       stage_kind: {
         Args: {
           _estagio: Database["public"]["Enums"]["lead_estagio"]
