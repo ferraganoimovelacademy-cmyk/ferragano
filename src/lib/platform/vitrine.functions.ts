@@ -77,11 +77,15 @@ export const submitLeadPublico = createServerFn({ method: "POST" })
       .object({
         empreendimentoId: z.string().uuid().nullish(),
         landingPageId: z.string().uuid().nullish(),
+        unidadeId: z.string().uuid().nullish(),
         nome: z.string().trim().min(2).max(120),
         email: z.string().trim().email().max(160).optional().or(z.literal("")),
         telefone: z.string().trim().min(8).max(30),
         mensagem: z.string().trim().max(1000).optional().or(z.literal("")),
         origem: z.enum(LEAD_ORIGENS).default("site"),
+        /** Contexto de aquisição — medido, nunca confiado para autorizar nada. */
+        rota: z.string().trim().max(160).nullish(),
+        utm: utmSchema.nullish(),
       })
       .refine((v) => Boolean(v.email) || Boolean(v.telefone), {
         message: "Informe e-mail ou telefone.",
