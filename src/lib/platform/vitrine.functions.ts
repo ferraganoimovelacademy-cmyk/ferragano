@@ -303,7 +303,15 @@ export const submitLeadPublico = createServerFn({ method: "POST" })
       personId: person.id,
       opportunityId: oportunidade.id,
       actorId: null,
-      payload: { origem: data.origem, campanha, empreendimentoId, landingPageId },
+      payload: {
+        origem: data.origem,
+        campanha: campanhaFinal,
+        empreendimentoId,
+        unidadeId,
+        landingPageId,
+        rota: data.rota ?? null,
+        utm,
+      },
     });
 
     const { notify, notifyWorkspace } = await import("@/lib/platform/notifications.server");
@@ -322,5 +330,10 @@ export const submitLeadPublico = createServerFn({ method: "POST" })
       await notifyWorkspace(supabaseAdmin, workspaceId!, aviso);
     }
 
-    return { ok: true as const, workspaceId: workspaceId!, opportunityId: oportunidade.id };
+    return {
+      ok: true as const,
+      workspaceId: workspaceId!,
+      opportunityId: oportunidade.id,
+      duplicado: false as const,
+    };
   });
