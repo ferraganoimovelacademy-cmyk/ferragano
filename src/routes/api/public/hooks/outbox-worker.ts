@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { authenticateCronRequest } from "@/integrations/supabase/cron-auth";
 import { z } from "zod";
 
 /**
  * SPRINT 09 — Outbox Worker.
  *
  * Chamado pelo pg_cron a cada minuto. Rota pública (o cron vem de fora),
- * autenticada pela apikey do projeto. Nunca retorna PII: apenas contadores.
+ * autenticada pelo segredo de cron (authenticateCronRequest). Nunca retorna PII: apenas contadores.
  */
 const bodySchema = z
   .object({ limite: z.number().int().min(1).max(100).optional() })
@@ -16,20 +17,8 @@ export const Route = createFileRoute("/api/public/hooks/outbox-worker")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const apikey =
-          request.headers.get("apikey") ??
-          request.headers.get("authorization")?.replace(/^Bearer /i, "") ??
-          "";
-
-        const esperado =
-          process.env["SUPABASE_PUBLISHABLE_KEY"] ?? process.env["SUPABASE_ANON_KEY"] ?? "";
-
-        if (!esperado || apikey !== esperado) {
-          return new Response(JSON.stringify({ error: "unauthorized" }), {
-            status: 401,
-            headers: { "content-type": "application/json" },
-          });
-        }
+        const negado = await authenticateCronRequest(request);
+        if (negado) return negado;
 
         let limite = 20;
         try {

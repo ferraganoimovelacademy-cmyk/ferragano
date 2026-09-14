@@ -1,30 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { authenticateCronRequest } from "@/integrations/supabase/cron-auth";
 
 /**
  * SPRINT 17 — Automação Inteligente.
  *
  * Chamado pelo pg_cron: avalia os sinais do Advisor de todos os workspaces
- * ativos e enfileira os efeitos no Outbox. Rota pública autenticada pela
- * apikey do projeto; a resposta traz apenas contadores (nunca PII).
+ * ativos e enfileira os efeitos no Outbox. Rota pública autenticada pelo
+ * segredo de cron (authenticateCronRequest); a resposta traz apenas contadores (nunca PII).
  */
 export const Route = createFileRoute("/api/public/hooks/advisor-watchdog")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const apikey =
-          request.headers.get("apikey") ??
-          request.headers.get("authorization")?.replace(/^Bearer /i, "") ??
-          "";
-
-        const esperado =
-          process.env["SUPABASE_PUBLISHABLE_KEY"] ?? process.env["SUPABASE_ANON_KEY"] ?? "";
-
-        if (!esperado || apikey !== esperado) {
-          return new Response(JSON.stringify({ error: "unauthorized" }), {
-            status: 401,
-            headers: { "content-type": "application/json" },
-          });
-        }
+        const negado = await authenticateCronRequest(request);
+        if (negado) return negado;
 
         const inicio = Date.now();
         try {

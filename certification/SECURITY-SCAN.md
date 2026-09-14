@@ -5,10 +5,10 @@ Não edite à mão — a fonte das vulnerabilidades é `certification/security-f
 
 | | |
 | --- | --- |
-| Execução | 2026-09-13T19:43:44.745Z |
+| Execução | 2026-09-14T00:12:21.961Z |
 | Referência | `local` |
 | Backend alcançável | sim |
-| **Veredito** | **🔴 DEPLOY BLOQUEADO** |
+| **Veredito** | **🟢 LIBERADO** |
 
 ## Vulnerabilidades selecionadas x resolvidas
 
@@ -26,9 +26,9 @@ Resolvidas: **0/0** · Regressões: **0** · Não verificadas: **0**
 
 | Barreira | Resultado | Saída |
 | --- | --- | --- |
-| Isolamento de workspace | 🔴 FAIL | `FAIL  tests/isolation/workspace-isolation.test.ts > isolamento — chamador sem sessão > não executa funções internas de plataforma · AssertionError: expected 200 to be greater than or equal to 400 · FAIL  tests/isolation/` |
-| Simulação de ataque | 🔴 FAIL | `FAIL  tests/security/attack-simulation.test.ts > ataque — extração de dado sensível pela vitrine > não expõe unidades.score_liquidez · FAIL  tests/security/attack-simulation.test.ts > ataque — extração de dado sensível p` |
-| Caos e resiliência | 🟢 PASS | `Test Files  1 passed (1) · Tests  11 passed (11) · Duration  521ms (transform 77ms, setup 0ms, import 248ms, tests 44ms, environment 0ms)` |
+| Isolamento de workspace | 🟢 PASS | `Test Files  1 passed (1) · Tests  54 passed (54) · Duration  15.63s (transform 38ms, setup 0ms, import 64ms, tests 15.33s, environment 0ms)` |
+| Simulação de ataque | 🟢 PASS | `Test Files  3 passed (3) · Tests  70 passed (70) · Duration  9.92s (transform 102ms, setup 0ms, import 208ms, tests 16.07s, environment 0ms)` |
+| Caos e resiliência | 🟢 PASS | `Test Files  1 passed (1) · Tests  11 passed (11) · Duration  529ms (transform 59ms, setup 0ms, import 237ms, tests 47ms, environment 0ms)` |
 | Dependências (audit) | ⚠️ INDISPONÍVEL | `error: audit request failed (status 404) · Command failed: bun audit --audit-level=high · error: audit request failed (status 404)` |
 
 ## Avisos aceitos com justificativa
