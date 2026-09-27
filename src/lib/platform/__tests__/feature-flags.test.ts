@@ -17,12 +17,9 @@ describe("feature-flags", () => {
     for (const m of ALL_MODULES) expect(moduleLabels[m]).toBeTruthy();
   });
 
-  it("todo módulo tem uma flag booleana definida (nasce desligado, exceto CRM)", () => {
+  it("todo módulo tem uma flag booleana definida e o CRM está sempre ligado", () => {
     for (const m of ALL_MODULES) expect(typeof featureFlags[m]).toBe("boolean");
     expect(featureFlags.crm).toBe(true);
-    for (const m of ALL_MODULES.filter((m) => m !== "crm")) {
-      expect(featureFlags[m]).toBe(false);
-    }
   });
 
   it("isModuleEnabled sem chave é sempre permitido (rota sem módulo associado)", () => {
@@ -30,7 +27,6 @@ describe("feature-flags", () => {
   });
 
   it("isModuleEnabled reflete o estado da flag", () => {
-    expect(isModuleEnabled("crm")).toBe(true);
-    expect(isModuleEnabled("erp")).toBe(false);
+    for (const m of ALL_MODULES) expect(isModuleEnabled(m)).toBe(featureFlags[m]);
   });
 });

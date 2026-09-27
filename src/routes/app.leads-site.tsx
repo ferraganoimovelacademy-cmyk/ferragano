@@ -31,9 +31,9 @@ function LeadsSiteRoute() {
   useTrackScreen("marketing", "leads_site", { surface: "app.leads-site" });
 
   const funil = useQuery({
-    queryKey: ["site-lead-funnel", workspaceId, session?.user?.id],
+    queryKey: ["site-lead-funnel", workspaceId, session?.profile?.id],
     queryFn: () => buscar({ data: { workspaceId: workspaceId!, dias: 30 } }),
-    enabled: Boolean(workspaceId && session?.user?.id),
+    enabled: Boolean(workspaceId && session?.profile?.id),
   });
 
   return (
