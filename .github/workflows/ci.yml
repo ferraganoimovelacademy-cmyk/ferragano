@@ -25,11 +25,10 @@ jobs:
         env:
           LINT_BASE_REF: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || 'HEAD~1' }}
         run: bun run lint:ci
+      # URL e chave publicável do Supabase vêm do .env versionado (valores públicos).
+      # Não sobrescrever com secrets vazios: isso zera as variáveis e quebra os testes.
       - name: Test
         run: bun run test
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
       - name: Validate Static Routes
         run: bun scripts/ci/check-static-routes.ts
       - name: Build
@@ -42,9 +41,6 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install
       - name: Security scan
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
         run: bun run security:scan
       - name: Publicar relatório
         if: always()
@@ -62,11 +58,6 @@ jobs:
       - name: Install Playwright browsers
         run: bunx playwright install --with-deps chromium
       - name: E2E
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
-          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
         run: bun run test:e2e
       - name: Publicar relatório
         if: always()
